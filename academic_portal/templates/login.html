@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+  <meta charset="UTF-8" />
+  <title>Login | CanvasLMS-Lite</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet" />
+
+  <style>
+    :root {
+      --primary-color: #0070f3;
+      --bg-light: #f5f5f5;
+      --bg-dark: #1e1e2f;
+      --card-light: #ffffff;
+      --card-dark: #2b2b3c;
+      --text-light: #2d3b45;
+      --text-dark: #ffffff;
+    }
+
+    [data-theme="dark"] {
+      --bg: var(--bg-dark);
+      --card: var(--card-dark);
+      --text: var(--text-dark);
+    }
+
+    [data-theme="light"] {
+      --bg: var(--bg-light);
+      --card: var(--card-light);
+      --text: var(--text-light);
+    }
+
+    body {
+      background: var(--bg);
+      font-family: 'Segoe UI', sans-serif;
+      color: var(--text);
+      transition: background 0.3s ease, color 0.3s ease;
+    }
+
+    .login-container {
+      max-width: 420px;
+      margin: 8% auto;
+      padding: 30px;
+      background: var(--card);
+      border-radius: 16px;
+      box-shadow: 0 8px 24px rgba(0, 0, 0, 0.1);
+      transition: background 0.3s ease, color 0.3s ease;
+    }
+
+    .form-title {
+      font-weight: 600;
+      font-size: 24px;
+      margin-bottom: 20px;
+      text-align: center;
+    }
+
+    .btn-login {
+      background-color: var(--primary-color);
+      border: none;
+    }
+
+    .btn-login:hover {
+      background-color: #005dc1;
+    }
+
+    .form-control:focus {
+      box-shadow: none;
+      border-color: var(--primary-color);
+    }
+
+    .logo {
+      display: block;
+      margin: 0 auto 20px;
+      width: 80px;
+    }
+
+    .theme-toggle {
+      position: absolute;
+      top: 20px;
+      right: 20px;
+      background: transparent;
+      border: none;
+      color: var(--text);
+      font-size: 14px;
+      cursor: pointer;
+    }
+  </style>
+</head>
+<body>
+
+  <button class="theme-toggle" onclick="toggleTheme()">🌙 Toggle Theme</button>
+
+  <div class="login-container">
+    <div class="form-title">Login to CanvasLMS-Lite</div>
+
+    {% with messages = get_flashed_messages() %}
+      {% if messages %}
+        <div class="alert alert-warning" role="alert">
+          {{ messages[0] }}
+        </div>
+      {% endif %}
+    {% endwith %}
+
+    <form method="POST" action="{{ url_for('login') }}" autocomplete="off">
+      <div class="mb-3">
+        <label for="id" class="form-label">User ID</label>
+        <input type="text" class="form-control" id="id" name="id"
+               placeholder="e.g., 12342024" required pattern="\d{8}" autocomplete="off" />
+      </div>
+
+      <div class="mb-3">
+        <label for="password" class="form-label">Password</label>
+        <input type="password" class="form-control" id="password" name="password"
+               required minlength="8" autocomplete="new-password" />
+      </div>
+
+      <button type="submit" class="btn btn-login w-100 text-white">Login</button>
+
+      <p class="mt-3 text-center small">
+        Don’t have an account?
+        <a href="{{ url_for('register') }}">Register here</a>
+      </p>
+    </form>
+  </div>
+
+  <script>
+    function toggleTheme() {
+      const html = document.documentElement;
+      const current = html.getAttribute("data-theme");
+      const next = current === "light" ? "dark" : "light";
+      html.setAttribute("data-theme", next);
+    }
+  </script>
+</body>
+</html>

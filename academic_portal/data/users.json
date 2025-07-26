@@ -1,0 +1,26 @@
+[
+    {
+        "id": "42342025",
+        "name": "Peace Munashe",
+        "email": "peace@gmail.com",
+        "password": "$2b$12$OW2ZGvknhlySuPMAUqGAa.kRwKfEYnxqXNX.G31ALHHYTJ84iUwYa",
+        "role": "student",
+        "theme": "colorful"
+    },
+    {
+        "id": "23420000",
+        "name": "Dr Nigel",
+        "email": "nigel@gmail.com",
+        "password": "$2b$12$xx1emKavWzwXak3Mz8nF3.xw3u6AKtFY5/HnvlxQwCpQtNoSXoEUC",
+        "role": "faculty",
+        "theme": "dark"
+    },
+    {
+        "id": "23410000",
+        "name": "Brian Nhira",
+        "email": "brian@gmail.com",
+        "password": "$2b$12$CsGquIRV9nhhUy40NvppgeKchgHvmfA7qZxRTvZS9aerbj0PpSvFi",
+        "role": "faculty",
+        "theme": "dark"
+    }
+]

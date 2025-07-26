@@ -1,0 +1,824 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="{{ theme }}">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Student Dashboard | CanvasLite</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
+    <style>
+        :root {
+            --sidebar-width: 280px;
+            --header-height: 70px;
+            --transition-speed: 0.3s;
+        }
+
+        /* Base Layout */
+        body {
+            display: grid;
+            grid-template-columns: var(--sidebar-width) 1fr;
+            grid-template-rows: var(--header-height) 1fr;
+            min-height: 100vh;
+            margin: 0;
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            line-height: 1.6;
+            color: var(--text-color);
+            background-color: var(--main-bg);
+            transition: all var(--transition-speed) ease;
+        }
+
+        /* Sidebar Styles */
+        .sidebar {
+            grid-row: 1 / -1;
+            background-color: var(--sidebar-bg);
+            color: var(--sidebar-text);
+            border-right: 1px solid var(--border-color);
+            display: flex;
+            flex-direction: column;
+            overflow-y: auto;
+        }
+
+        .sidebar-header {
+            padding: 20px;
+            border-bottom: 1px solid var(--border-color);
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .sidebar-title {
+            font-size: 1.3rem;
+            font-weight: 600;
+            margin: 0;
+            color: var(--sidebar-active);
+        }
+
+        .nav-menu {
+            flex: 1;
+            list-style: none;
+            padding: 15px 0;
+            margin: 0;
+            overflow-y: auto;
+        }
+
+        .nav-item {
+            margin-bottom: 4px;
+        }
+
+        .nav-link {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 12px 20px;
+            color: var(--sidebar-text);
+            text-decoration: none;
+            border-radius: 6px;
+            margin: 0 10px;
+            transition: all 0.2s ease;
+            position: relative;
+        }
+
+        .nav-link:hover {
+            background-color: var(--sidebar-hover);
+            color: var(--sidebar-active);
+        }
+
+        .nav-link.active {
+            background-color: var(--primary-light);
+            color: var(--primary-color);
+            font-weight: 500;
+        }
+
+        .nav-icon {
+            font-size: 1.1rem;
+            width: 24px;
+            display: flex;
+            justify-content: center;
+        }
+
+        .unread-count {
+            position: absolute;
+            right: 15px;
+            background-color: var(--primary-color);
+            color: white;
+            border-radius: 50%;
+            width: 20px;
+            height: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.7rem;
+            font-weight: bold;
+        }
+
+        /* Header Styles */
+        .header {
+            grid-column: 2;
+            display: flex;
+            justify-content: flex-end;
+            align-items: center;
+            padding: 0 25px;
+            background-color: var(--header-bg);
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+            z-index: 10;
+        }
+
+        .user-actions {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .theme-toggle {
+            background: none;
+            border: none;
+            cursor: pointer;
+            font-size: 1rem;
+            color: var(--text-color);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 8px 12px;
+            border-radius: 6px;
+            transition: background-color 0.2s;
+        }
+
+        .theme-toggle:hover {
+            background-color: var(--card-bg-dark);
+        }
+
+        /* Main Content Styles */
+        .main-content {
+            grid-column: 2;
+            padding: 25px;
+            overflow-y: auto;
+            background-color: var(--main-bg);
+        }
+
+        .section {
+            margin-bottom: 30px;
+            animation: fadeIn 0.4s ease;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* Card Styles */
+        .card {
+            background-color: var(--card-bg);
+            border-radius: 12px;
+            padding: 20px;
+            margin-bottom: 20px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+            border: 1px solid var(--border-color);
+        }
+
+        .card-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            padding-bottom: 15px;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .card-title {
+            font-size: 1.25rem;
+            font-weight: 600;
+            margin: 0;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        /* Button Styles */
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            padding: 10px 16px;
+            border: none;
+            border-radius: 8px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            text-decoration: none;
+        }
+
+        .btn-primary {
+            background-color: var(--primary-color);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background-color: var(--primary-dark);
+            transform: translateY(-1px);
+        }
+
+        .btn-secondary {
+            background-color: var(--secondary-color);
+            color: var(--secondary-text);
+        }
+
+        .btn-secondary:hover {
+            background-color: var(--secondary-dark);
+        }
+
+        /* Grade Indicators */
+        .grade-indicator {
+            display: inline-flex;
+            align-items: center;
+            padding: 4px 10px;
+            border-radius: 20px;
+            font-size: 0.9rem;
+            font-weight: 600;
+        }
+
+        .grade-A { background-color: #4CAF50; color: white; }
+        .grade-B { background-color: #8BC34A; color: white; }
+        .grade-C { background-color: #FFC107; color: black; }
+        .grade-D { background-color: #FF9800; color: white; }
+        .grade-F { background-color: #F44336; color: white; }
+
+        /* Assignment List */
+        .assignment-list {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 20px;
+        }
+
+        .assignment-card {
+            display: flex;
+            flex-direction: column;
+            height: 100%;
+        }
+
+        .assignment-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 10px;
+        }
+
+        .course-code {
+            font-size: 0.9rem;
+            color: var(--text-muted);
+            background-color: var(--card-bg-dark);
+            padding: 3px 8px;
+            border-radius: 4px;
+        }
+
+        .assignment-actions {
+            margin-top: 15px;
+            display: flex;
+            gap: 10px;
+        }
+
+        /* Feedback Section */
+        .feedback {
+            margin-top: 15px;
+            padding: 15px;
+            background-color: var(--card-bg-dark);
+            border-radius: 4px;
+            border-left: 4px solid var(--primary-color);
+        }
+
+        /* Message Styles */
+        .message-list {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+        
+        .message-card {
+            background-color: var(--card-bg);
+            border-radius: 8px;
+            padding: 15px;
+            border: 1px solid var(--border-color);
+        }
+        
+        .message-card.unread {
+            border-left: 4px solid var(--primary-color);
+            background-color: var(--card-bg-dark);
+        }
+        
+        .message-header {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 10px;
+        }
+        
+        .message-meta {
+            font-size: 0.85rem;
+            color: var(--text-muted);
+        }
+        
+        .message-content {
+            margin: 10px 0;
+        }
+        
+        .message-actions {
+            display: flex;
+            gap: 10px;
+            margin-top: 15px;
+        }
+
+        /* Empty State */
+        .empty-state {
+            text-align: center;
+            padding: 40px 20px;
+        }
+
+        .empty-icon {
+            font-size: 2.5rem;
+            margin-bottom: 15px;
+            opacity: 0.5;
+        }
+
+        .empty-text {
+            color: var(--text-muted);
+            margin-bottom: 20px;
+        }
+
+        /* Modal Styles */
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 100;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0,0,0,0.7);
+        }
+
+        .modal-content {
+            background-color: var(--card-bg);
+            margin: 10% auto;
+            padding: 25px;
+            border-radius: 12px;
+            width: 80%;
+            max-width: 600px;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+        }
+
+        .close-modal {
+            color: var(--text-color);
+            float: right;
+            font-size: 28px;
+            font-weight: bold;
+            cursor: pointer;
+        }
+
+        .close-modal:hover {
+            color: var(--accent-color);
+        }
+
+        /* Form Styles */
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 500;
+        }
+
+        .form-group textarea {
+            width: 100%;
+            padding: 10px;
+            border-radius: 8px;
+            border: 1px solid var(--border-color);
+            background-color: var(--input-bg);
+            color: var(--text-color);
+            min-height: 100px;
+            resize: vertical;
+        }
+
+        .file-upload {
+            margin-top: 10px;
+        }
+
+        /* Responsive Adjustments */
+        @media (max-width: 992px) {
+            body {
+                grid-template-columns: 1fr;
+                grid-template-rows: var(--header-height) 1fr;
+            }
+            
+            .sidebar {
+                position: fixed;
+                top: 0;
+                left: -100%;
+                width: var(--sidebar-width);
+                height: 100vh;
+                z-index: 1000;
+                transition: left 0.3s ease;
+            }
+            
+            .sidebar.active {
+                left: 0;
+            }
+            
+            .header {
+                grid-column: 1;
+                justify-content: space-between;
+            }
+            
+            .main-content {
+                grid-column: 1;
+            }
+            
+            .menu-toggle {
+                display: flex;
+            }
+        }
+    </style>
+</head>
+<body class="student-dashboard">
+    <!-- SIDEBAR NAVIGATION -->
+    <aside class="sidebar">
+        <div class="sidebar-header">
+            <div class="sidebar-title">📘 CanvasLite</div>
+        </div>
+        <ul class="nav-menu">
+            <li class="nav-item">
+                <a href="/student_dashboard" class="nav-link active">
+                    <span class="nav-icon">📊</span>
+                    <span>Dashboard</span>
+                </a>
+            </li>
+            <li class="nav-item">
+                <a href="#assignments" class="nav-link" onclick="showTab('assignments')">
+                    <span class="nav-icon">📚</span>
+                    <span>Assignments</span>
+                </a>
+            </li>
+            <li class="nav-item">
+                <a href="#grades" class="nav-link" onclick="showTab('grades')">
+                    <span class="nav-icon">📝</span>
+                    <span>Grades</span>
+                </a>
+            </li>
+            <li class="nav-item">
+                <a href="#inbox" class="nav-link" onclick="showTab('inbox')">
+                    <span class="nav-icon">📨</span>
+                    <span>Inbox</span>
+                    {% if unread_count > 0 %}
+                        <span class="unread-count">{{ unread_count }}</span>
+                    {% endif %}
+                </a>
+            </li>
+            <li class="nav-item">
+                <a href="/logout" class="nav-link">
+                    <span class="nav-icon">🚪</span>
+                    <span>Logout</span>
+                </a>
+            </li>
+        </ul>
+    </aside>
+
+    <!-- HEADER -->
+    <header class="header">
+        <button class="menu-toggle" onclick="toggleSidebar()" style="display: none;">
+            <span>☰</span>
+        </button>
+        <div class="user-actions">
+            <form id="themeForm" action="{{ url_for('toggle_theme') }}" method="POST">
+                <input type="hidden" name="next" value="{{ request.path }}">
+                <button type="submit" class="theme-toggle" id="themeToggleButton">
+                    {{ '☀️ Light Mode' if theme == 'dark' else '🌙 Dark Mode' }}
+                </button>
+            </form>
+        </div>
+    </header>
+
+    <!-- MAIN CONTENT -->
+    <main class="main-content">
+        <div class="tabs">
+            <div class="tab active" onclick="showTab('assignments')">Assignments</div>
+            <div class="tab" onclick="showTab('grades')">Grades</div>
+            <div class="tab" onclick="showTab('inbox')">Inbox</div>
+        </div>
+
+        <!-- Assignments Tab -->
+        <div id="assignments-tab" class="section">
+            <div class="card">
+                <h2>📚 Available Assignments</h2>
+                {% if assignments %}
+                    <div class="assignment-list">
+                        {% for assignment in assignments %}
+                            <div class="card assignment-card">
+                                <div class="assignment-header">
+                                    <h3>{{ assignment.title }}</h3>
+                                    <span class="course-code">{{ assignment.course_id }}</span>
+                                </div>
+                                <div>
+                                    <p><strong>Due:</strong> {{ assignment.due_date }}</p>
+                                    <p>{{ assignment.description }}</p>
+                                    
+                                    {% if assignment.attachment %}
+                                        <a href="{{ url_for('static', filename=assignment.attachment) }}" 
+                                           class="btn btn-secondary">
+                                            📎 Download Assignment Files
+                                        </a>
+                                    {% endif %}
+                                </div>
+                                <div class="assignment-actions">
+                                    <button class="btn btn-primary" 
+                                            onclick="openSubmissionModal('{{ assignment.assignment_id }}', '{{ assignment.title }}')">
+                                        Submit Assignment
+                                    </button>
+                                </div>
+                            </div>
+                        {% endfor %}
+                    </div>
+                {% else %}
+                    <div class="empty-state">
+                        <div class="empty-icon">📭</div>
+                        <h3 class="empty-text">No assignments available yet</h3>
+                        <p>Check back later for new assignments</p>
+                    </div>
+                {% endif %}
+            </div>
+        </div>
+
+        <!-- Grades Tab -->
+        <div id="grades-tab" class="section" style="display: none;">
+            <div class="card">
+                <h2>📝 Your Grades</h2>
+                {% if grades %}
+                    <div class="assignment-list">
+                        {% for grade in grades %}
+                            <div class="card assignment-card">
+                                <div class="assignment-header">
+                                    <h3>{{ grade.assignment_title }} ({{ grade.course_id }})</h3>
+                                    <span class="grade-indicator grade-{{ get_grade_letter(grade.grade) }}">
+                                        {{ grade.grade }}% ({{ get_grade_letter(grade.grade) }})
+                                    </span>
+                                </div>
+                                {% if grade.submission_date %}
+                                    <p><strong>Submitted On:</strong> {{ grade.submission_date }}</p>
+                                {% endif %}
+                                {% if grade.graded_date %}
+                                    <p><strong>Graded On:</strong> {{ grade.graded_date }}</p>
+                                {% endif %}
+                                {% if grade.feedback %}
+                                    <div class="feedback">
+                                        <h4>Feedback:</h4>
+                                        <p>{{ grade.feedback }}</p>
+                                    </div>
+                                {% endif %}
+                                {% if grade.file_path %}
+                                    <a href="{{ url_for('download_submission', filename=grade.file_path.split('/')[-1]) }}" 
+                                       class="btn btn-secondary">
+                                        📥 Download Your Submission
+                                    </a>
+                                {% endif %}
+                            </div>
+                        {% endfor %}
+                    </div>
+                {% else %}
+                    <div class="empty-state">
+                        <div class="empty-icon">📝</div>
+                        <h3 class="empty-text">No grades available yet</h3>
+                        <p>Your submitted assignments will appear here once graded</p>
+                    </div>
+                {% endif %}
+            </div>
+        </div>
+
+        <!-- Inbox Tab -->
+        <div id="inbox-tab" class="section" style="display: none;">
+            <div class="card">
+                <h2>📨 Your Messages</h2>
+                {% if messages %}
+                <div class="message-list">
+                    {% for message in messages %}
+                    <div class="message-card {% if not message.read %}unread{% endif %}">
+                        <div class="message-header">
+                            <h3>{{ message.subject }}</h3>
+                            <span class="message-meta">
+                                From: {{ message.sender_name }} ({{ message.sender_role }})
+                                <br>
+                                {{ message.sent_at }}
+                            </span>
+                        </div>
+                        <div class="message-content">
+                            <p>{{ message.content }}</p>
+                        </div>
+                        <div class="message-actions">
+                            <button class="btn btn-secondary" onclick="replyToMessage('{{ message.sender_id }}', '{{ message.subject }}')">
+                                Reply
+                            </button>
+                            {% if not message.read %}
+                            <button class="btn btn-secondary" onclick="markAsRead('{{ message.id }}', this)">
+                                Mark as Read
+                            </button>
+                            {% endif %}
+                        </div>
+                    </div>
+                    {% endfor %}
+                </div>
+                {% else %}
+                <div class="empty-state">
+                    <div class="empty-icon">📭</div>
+                    <h3 class="empty-text">No messages yet</h3>
+                    <p>Your inbox is empty</p>
+                </div>
+                {% endif %}
+            </div>
+        </div>
+    </main>
+
+    <!-- Submission Modal -->
+    <div id="submissionModal" class="modal">
+        <div class="modal-content">
+            <span class="close-modal" onclick="closeSubmissionModal()">&times;</span>
+            <h2 id="modalAssignmentTitle"></h2>
+            <form id="submissionForm" action="{{ url_for('submit_assignment') }}" method="POST" enctype="multipart/form-data">
+                <input type="hidden" id="modalAssignmentId" name="assignment_id">
+                
+                <div class="form-group">
+                    <label for="text_response">Your Response:</label>
+                    <textarea id="text_response" name="text_response" required></textarea>
+                </div>
+                
+                <div class="form-group">
+                    <label for="submission_file">Upload Files:</label>
+                    <input type="file" id="submission_file" name="submission_file" class="file-upload">
+                    <small>Supported formats: .pdf, .doc, .docx, .txt, .zip (Max 10MB)</small>
+                </div>
+                
+                <button type="submit" class="btn btn-primary" style="width: 100%;">Submit Assignment</button>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        // Modal functions
+        function openSubmissionModal(assignmentId, assignmentTitle) {
+            document.getElementById('modalAssignmentId').value = assignmentId;
+            document.getElementById('modalAssignmentTitle').textContent = 'Submit: ' + assignmentTitle;
+            document.getElementById('submissionModal').style.display = 'block';
+        }
+
+        function closeSubmissionModal() {
+            document.getElementById('submissionModal').style.display = 'none';
+            document.getElementById('submissionForm').reset();
+        }
+
+        // Close modal when clicking outside
+        window.onclick = function(event) {
+            const modal = document.getElementById('submissionModal');
+            if (event.target == modal) {
+                closeSubmissionModal();
+            }
+        }
+
+        // Form submission handling
+        document.getElementById('submissionForm').addEventListener('submit', function(e) {
+            const fileInput = document.getElementById('submission_file');
+            const textInput = document.getElementById('text_response');
+            
+            if (!textInput.value.trim()) {
+                alert('Please enter your response before submitting.');
+                e.preventDefault();
+                return false;
+            }
+            
+            if (fileInput.files.length > 0) {
+                const fileSize = fileInput.files[0].size / 1024 / 1024; // in MB
+                if (fileSize > 10) {
+                    alert('File size should be less than 10MB');
+                    e.preventDefault();
+                    return false;
+                }
+            }
+            
+            return true;
+        });
+
+        // Tab switching
+        function showTab(tabName) {
+            // Update active tab
+            document.querySelectorAll('.tab').forEach(tab => {
+                tab.classList.remove('active');
+                if (tab.textContent.toLowerCase().includes(tabName)) {
+                    tab.classList.add('active');
+                }
+            });
+            
+            // Show/hide content
+            document.getElementById('assignments-tab').style.display = 'none';
+            document.getElementById('grades-tab').style.display = 'none';
+            document.getElementById('inbox-tab').style.display = 'none';
+            document.getElementById(tabName + '-tab').style.display = 'block';
+            
+            // Update sidebar active state
+            document.querySelectorAll('.nav-link').forEach(link => {
+                link.classList.remove('active');
+                if (link.textContent.toLowerCase().includes(tabName)) {
+                    link.classList.add('active');
+                }
+            });
+        }
+
+        // Message functions
+        function replyToMessage(recipientId, subject) {
+            // Implement reply functionality
+            alert(`Reply to ${recipientId} about "${subject}"`);
+        }
+    
+        function markAsRead(messageId, button) {
+            // Send AJAX request to mark as read
+            fetch(`/mark_as_read/${messageId}`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                }
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    button.closest('.message-card').classList.remove('unread');
+                    // Update unread count in the UI
+                    updateUnreadCount();
+                }
+            });
+        }
+        
+        function updateUnreadCount() {
+            // Update the unread count indicator
+            fetch('/get_unread_count')
+                .then(response => response.json())
+                .then(data => {
+                    const unreadElement = document.querySelector('.unread-count');
+                    if (data.count > 0) {
+                        if (!unreadElement) {
+                            // Create the unread count element if it doesn't exist
+                            const inboxLink = document.querySelector('.nav-menu li:nth-child(4) a');
+                            const countSpan = document.createElement('span');
+                            countSpan.className = 'unread-count';
+                            countSpan.textContent = data.count;
+                            inboxLink.appendChild(countSpan);
+                        } else {
+                            unreadElement.textContent = data.count;
+                        }
+                    } else if (unreadElement) {
+                        unreadElement.remove();
+                    }
+                });
+        }
+
+        // Toggle sidebar on mobile
+        function toggleSidebar() {
+            document.querySelector('.sidebar').classList.toggle('active');
+        }
+
+        // Theme toggle form handling
+        document.getElementById('themeForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            fetch(this.action, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/x-www-form-urlencoded',
+                },
+                body: new URLSearchParams(new FormData(this))
+            })
+            .then(response => {
+                if (response.redirected) {
+                    window.location.href = response.url;
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+            });
+        });
+
+        // Initialize the page
+        document.addEventListener('DOMContentLoaded', function() {
+            // Set first tab as active by default
+            showTab('assignments');
+            
+            // Check screen size for responsive behavior
+            function checkScreenSize() {
+                const menuToggle = document.querySelector('.menu-toggle');
+                if (window.innerWidth < 992) {
+                    menuToggle.style.display = 'flex';
+                } else {
+                    menuToggle.style.display = 'none';
+                    document.querySelector('.sidebar').classList.remove('active');
+                }
+            }
+            
+            window.addEventListener('resize', checkScreenSize);
+            checkScreenSize();
+        });
+    </script>
+</body>
+</html>

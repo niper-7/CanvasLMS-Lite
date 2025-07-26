@@ -1,0 +1,67 @@
+[
+    {
+        "submission_id": "da76bb56-5b43-42d9-b3fe-c3de9fbb403e",
+        "assignment_id": "a46e949b-a0c1-4a47-b61d-6874d074616e",
+        "student_id": "42342025",
+        "assignment_title": "Heritage",
+        "course_id": "HR231",
+        "text_response": "kjkj",
+        "file_path": "",
+        "submission_date": "2025-07-26T15:02:03.703198",
+        "status": "graded",
+        "grade": 67,
+        "feedback": "Good"
+    },
+    {
+        "submission_id": "f8c03966-382d-4640-a83e-d86d2d29b27e",
+        "assignment_id": "f9c0f559-2472-45a9-a82e-dd5c679046e6",
+        "student_id": "42342025",
+        "assignment_title": "Geography",
+        "course_id": "GEO231",
+        "text_response": "N/A",
+        "file_path": "student_submissions\\f9c0f559-2472-45a9-a82e-dd5c679046e6_42342025_FDE II Teams Assignment 3.pdf",
+        "submission_date": "2025-07-26T15:02:32.322016",
+        "status": "graded",
+        "grade": 98,
+        "feedback": "Great"
+    },
+    {
+        "submission_id": "63b2b047-6d8a-45a4-898e-af48c0f0db86",
+        "assignment_id": "604ee4dc-ad2d-4f45-b978-0f0def41e8c3",
+        "student_id": "42342025",
+        "assignment_title": "CP4E",
+        "course_id": "CS212",
+        "text_response": "File 1",
+        "file_path": "student_submissions\\604ee4dc-ad2d-4f45-b978-0f0def41e8c3_42342025_FDE II Teams Assignment 3.pdf",
+        "submission_date": "2025-07-26T17:27:40.332477",
+        "status": "graded",
+        "grade": 56,
+        "feedback": ""
+    },
+    {
+        "submission_id": "d35f3805-c128-46d1-8f0d-dfa36a7ebcac",
+        "assignment_id": "3d9ed69b-7708-48d8-9439-7c4e234b91ca",
+        "student_id": "42342025",
+        "assignment_title": "CP4E",
+        "course_id": "CS212",
+        "text_response": "The text is not visible",
+        "file_path": "",
+        "submission_date": "2025-07-26T17:28:00.558068",
+        "status": "graded",
+        "grade": 70,
+        "feedback": ""
+    },
+    {
+        "submission_id": "b8a5ee97-e827-4654-861c-b4400e734793",
+        "assignment_id": "97a79e5b-6dc7-4d0d-acc1-5d6a811a4f28",
+        "student_id": "42342025",
+        "assignment_title": "Mathematics",
+        "course_id": "C1232",
+        "text_response": "rb",
+        "file_path": "student_submissions\\97a79e5b-6dc7-4d0d-acc1-5d6a811a4f28_42342025_FDE II Teams Assignment 3.pdf",
+        "submission_date": "2025-07-26T19:12:39.426023",
+        "status": "graded",
+        "grade": 56,
+        "feedback": ""
+    }
+]

@@ -1,0 +1,29 @@
+[
+    {
+        "assignment_id": "604ee4dc-ad2d-4f45-b978-0f0def41e8c3",
+        "title": "CP4E",
+        "description": "Python",
+        "due_date": "2025-07-31",
+        "course_id": "CS212",
+        "attachment": "attachments\\604ee4dc-ad2d-4f45-b978-0f0def41e8c3_desc.pdf",
+        "created_by": "23410000"
+    },
+    {
+        "assignment_id": "3d9ed69b-7708-48d8-9439-7c4e234b91ca",
+        "title": "CP4E",
+        "description": "Machiaveli\r\n",
+        "due_date": "2025-07-31",
+        "course_id": "CS212",
+        "attachment": "",
+        "created_by": "23420000"
+    },
+    {
+        "assignment_id": "97a79e5b-6dc7-4d0d-acc1-5d6a811a4f28",
+        "title": "Mathematics",
+        "description": "Algebra",
+        "due_date": "2025-07-31",
+        "course_id": "C1232",
+        "attachment": "attachments\\97a79e5b-6dc7-4d0d-acc1-5d6a811a4f28_desc.pdf",
+        "created_by": "23420000"
+    }
+]
